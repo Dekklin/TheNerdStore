@@ -1,0 +1,143 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using TheNerdStore.Models;
+@using TheNerdStore.Models.ViewModels;
+@using System.Security.Claims;
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    ViewData["Title"] = "_Layout";
+}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+      rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+      crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+<link rel="stylesheet" href="~/css/base.css" type="text/css" />
+<link rel="stylesheet" href="~/css/layout.css" type="text/css" />
+<link rel="stylesheet" href="~/css/modules.css" type="text/css" />
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="~/css/StyleSheet.css" type="text/css" />
+<title>Welcome to The Nerd Store</title>
+
+
+<body>
+    <header class="nav-item navbar-static-top navtop">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand GlowText" href="#"><h1 class="nerd">The Nerd Store</h1></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExample04">
+            <ul class="navbar-nav mr-auto">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <li class="nav-item dropdown">
+                        <a href="#" class="dropdown-toggle nav-link SmallGlow" data-toggle="dropdown">Shopping Options<b class="caret"></b></a>
+                        <div class="dropdown-menu user-menu ShopMenu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item SmallGlow" asp-controller="Shop" asp-action="Index"><i class="fas fa-lg fa-shopping-basket"></i>  Shop</a>
+
+                            <a class="dropdown-item SmallGlow" asp-controller="Checkout" asp-action="Index"><i class="fas fa-shopping-bag"></i>  Checkout </a>
+                            <a class="dropdown-item SmallGlow" asp-controller="Orders" asp-action="Index"><i class="fas fa-archive"></i>  Recent Orders</a>
+                        </div>
+                    </li>
+                    <noscript>
+                        <li class="nav-item">
+                            <a class="nav-link SmallGlow" asp-controller="Shop" asp-action="Index">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link SmallGlow" asp-controller="Shop" asp-action="MyBasket">My Basket</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link SmallGlow" asp-controller="Checkout" asp-action="Index">Checkout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link SmallGlow" asp-controller="Orders" asp-action="Index">Recent Orders</a>
+                        </li>
+                    </noscript>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link SmallGlow" asp-controller="Shop" asp-action="Index">Shop</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <ul class="navbar-nav navbar-right">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                var user = await UserManager.FindByEmailAsync(User.Identity.Name);
+                bool isAdmin = await UserManager.IsInRoleAsync(user, ApplicationRoles.Admin);
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                        <strong class="SmallGlow">Hi, @User.Claims.FirstOrDefault(c => c.Type == "FirstName").Value!</strong>
+                    </a>
+                    <div class="dropdown-menu user-menu ShopMenu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-item disabled">
+                            <div class="d-inline-block" id="user-attr">
+                                <strong>@User.Claims.FirstOrDefault(c => c.Type == "FullName").Value</strong>
+                                @if (isAdmin)
+                                {
+                                    <i class="fas fa-star"></i>
+                                }
+                                <p class="SmallGlow">@User.Identity.Name</p>
+                            </div>
+                        </div>
+                        @if (isAdmin)
+                        {
+                            <a class="dropdown-item SmallGlow" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
+                        }
+                        <a class="dropdown-item SmallGlow" asp-controller="Profile" asp-action="Index">My Profile</a>
+                        <a class="dropdown-item SmallGlow" asp-controller="Shop" asp-action="MyBasket">My Basket</a>
+                        <div class="dropdown-divider"></div>
+                        <div class="logout-container">
+                            <a asp-controller="Account" asp-action="Logout" class="btn btn-danger logoutbtn SmallGlow" id="logout-btn">Log out</a>
+                        </div>
+                    </div>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a class="nav-link SmallGlow" asp-controller="Account" asp-action="Register">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link SmallGlow" asp-controller="Account" asp-action="Login">Login</a>
+                </li>
+            }
+            <li class="nav-item">
+                <form class="form-inline mt-2 mt-md-0" asp-controller="Shop" asp-action="Index" method="get">
+                    <input id="product-search" class="form-control mr-sm-2" type="text" name="SearchString" placeholder="Search for a Product" aria-label="Search">
+                    <button class="btn btn-outline-light my-2 my-sm-0 SmallGlow" type="submit">Search</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+    </header>
+    <main>
+        @if (!SignInManager.IsSignedIn(User))
+        {
+            <br />
+        }
+        @RenderBody()
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">© Copyright 2018 TheNerdStore - All Rights Reserved</span>
+        </div>
+    </footer>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script>
+        $(document).ready(function () {
+            $(".disabled").click(function () {
+                return false;
+            });
+        });
+    </script>
+</body>

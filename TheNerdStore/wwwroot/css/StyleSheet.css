@@ -1,0 +1,33 @@
+﻿
+body {
+    background: linear-gradient(#000000, #000000, transparent), url("../Assets/stars.jpg") repeat center;
+}
+.navtop {
+    border-bottom: 3px solid white;
+    background-color:black;
+}
+.nerd {
+    color: white;
+    text-shadow: 0 0 50px white;
+}
+.bg-dark{
+    background-color:black!important;
+}
+.SmallGlow {
+    color: white!important;
+    text-shadow: 1px 1px 8px white;
+}
+.ShopMenu{
+    background-color:black;
+    border: 1px solid white;
+}
+.dropdown-item:hover{
+    background-color:black;
+}
+.icon {
+    width: 35px;
+    height: 35px;
+}
+.logout-container{
+    text-align:center;
+}
